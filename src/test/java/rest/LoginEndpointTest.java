@@ -1,9 +1,7 @@
 package rest;
 
-import entities.RenameMe;
 import entities.User;
 import entities.Role;
-
 import io.restassured.RestAssured;
 import static io.restassured.RestAssured.given;
 import io.restassured.http.ContentType;
@@ -28,11 +26,9 @@ public class LoginEndpointTest {
 
     private static final int SERVER_PORT = 7777;
     private static final String SERVER_URL = "http://localhost/api";
-    private static RenameMe r1, r2;
-
     static final URI BASE_URI = UriBuilder.fromUri(SERVER_URL).port(SERVER_PORT).build();
-    private static HttpServer httpServer;
-    private static EntityManagerFactory emf;
+    private static HttpServer HTTPSERVER;
+    private static EntityManagerFactory EMF;
 
     static HttpServer startServer() {
         ResourceConfig rc = ResourceConfig.forApplication(new ApplicationConfig());
@@ -43,9 +39,9 @@ public class LoginEndpointTest {
     public static void setUpClass() {
         //This method must be called before you request the EntityManagerFactory
         EMF_Creator.startREST_TestWithDB();
-        emf = EMF_Creator.createEntityManagerFactory(EMF_Creator.DbSelector.TEST, EMF_Creator.Strategy.CREATE);
+        EMF = EMF_Creator.createEntityManagerFactory(EMF_Creator.DbSelector.TEST, EMF_Creator.Strategy.CREATE);
 
-        httpServer = startServer();
+        HTTPSERVER = startServer();
         //Setup RestAssured
         RestAssured.baseURI = SERVER_URL;
         RestAssured.port = SERVER_PORT;
@@ -56,14 +52,14 @@ public class LoginEndpointTest {
     public static void closeTestServer() {
         //Don't forget this, if you called its counterpart in @BeforeAll
         EMF_Creator.endREST_TestWithDB();
-        httpServer.shutdownNow();
+        HTTPSERVER.shutdownNow();
     }
 
     // Setup the DataBase (used by the test-server and this test) in a known state BEFORE EACH TEST
     //TODO -- Make sure to change the EntityClass used below to use YOUR OWN (renamed) Entity class
     @BeforeEach
     public void setUp() {
-        EntityManager em = emf.createEntityManager();
+        EntityManager em = EMF.createEntityManager();
         try {
             em.getTransaction().begin();
             //Delete existing users and roles to get a "fresh" database
@@ -91,8 +87,8 @@ public class LoginEndpointTest {
         }
     }
     
-    //This is how we hold on to the token after login, similar to that a client must store the token somewhere
-  private static String securityToken;
+//This is how we hold on to the token after login, similar to that a client must store the token somewhere
+private static String securityToken;
 
   //Utility method to login and set the returned securityToken
   private static void login(String role, String password) {

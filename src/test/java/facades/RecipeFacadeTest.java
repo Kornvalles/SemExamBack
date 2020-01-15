@@ -1,39 +1,31 @@
 package facades;
 
+import entities.Recipe;
+import java.util.ArrayList;
+import java.util.List;
 import utils.EMF_Creator;
-import entities.RenameMe;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import utils.Settings;
 import utils.EMF_Creator.DbSelector;
 import utils.EMF_Creator.Strategy;
 
 //Uncomment the line below, to temporarily disable this test
-@Disabled
-public class FacadeExampleTest {
+//@Disabled
+public class RecipeFacadeTest {
 
-    private static EntityManagerFactory emf;
-    private static FacadeExample facade;
+    private static EntityManagerFactory EMF;
+    private static RecipeFacade FACADE;
+    private static List<Recipe> RECIPES = new ArrayList();
 
-    public FacadeExampleTest() {
-    }
-
-    //@BeforeAll
-    public static void setUpClass() {
-        emf = EMF_Creator.createEntityManagerFactory(
-                "pu",
-                "jdbc:mysql://localhost:3307/startcode_test",
-                "dev",
-                "ax2",
-                EMF_Creator.Strategy.CREATE);
-        facade = FacadeExample.getFacadeExample(emf);
+    public RecipeFacadeTest() {
     }
 
     /*   **** HINT **** 
@@ -44,8 +36,8 @@ public class FacadeExampleTest {
      */
     @BeforeAll
     public static void setUpClassV2() {
-       emf = EMF_Creator.createEntityManagerFactory(DbSelector.TEST,Strategy.DROP_AND_CREATE);
-       facade = FacadeExample.getFacadeExample(emf);
+       EMF = EMF_Creator.createEntityManagerFactory(DbSelector.TEST,Strategy.DROP_AND_CREATE);
+       FACADE = RecipeFacade.getRecipeFacade(EMF);
     }
 
     @AfterAll
@@ -57,13 +49,20 @@ public class FacadeExampleTest {
     //TODO -- Make sure to change the script below to use YOUR OWN entity class
     @BeforeEach
     public void setUp() {
-        EntityManager em = emf.createEntityManager();
+        EntityManager em = EMF.createEntityManager();
+        Recipe r1 = new Recipe();
+        Recipe r2 = new Recipe();
+        
+        RECIPES.add(r1);
+        RECIPES.add(r2);
+        
+        
+        
         try {
             em.getTransaction().begin();
-            em.createNamedQuery("RenameMe.deleteAllRows").executeUpdate();
-            em.persist(new RenameMe("Some txt", "More text"));
-            em.persist(new RenameMe("aaa", "bbb"));
-
+            em.createNamedQuery("Recipe.deleteAllRows").executeUpdate();
+            em.persist(r1);
+            em.persist(r2);
             em.getTransaction().commit();
         } finally {
             em.close();
@@ -75,10 +74,24 @@ public class FacadeExampleTest {
 //        Remove any data after each test was run
     }
 
-    // TODO: Delete or change this method 
     @Test
-    public void testAFacadeMethod() {
-        assertEquals(2, facade.getRenameMeCount(), "Expects two rows in the database");
+    public void testGetAllRecipes() {
+        //Arrange
+        int exp = RECIPES.size();
+        //Act
+        int act = FACADE.getAllRecipes().size();
+        //Assert
+        assertEquals(exp, act);
     }
+    
+//    @Test
+//    public void testIsSufficientStorage() {
+//        //Arrange
+//        boolean exp = true;
+//        //Act
+//        boolean act = FACADE.isSufficientStorage(RECIPES);
+//        //Assert
+//        assertTrue(act);
+//    }
 
 }

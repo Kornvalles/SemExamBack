@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/TheDanishWonder/CA-3-Backend.svg?branch=master)](https://travis-ci.org/TheDanishWonder/CA-3-Backend)
+[![Build Status](https://travis-ci.org/Kornvalles/SemExamBack.svg?branch=master)](https://travis-ci.org/Kornvalles/SemExamBack)
 
 *This is the quick start project which will be used as startcode for the semester project*
 
